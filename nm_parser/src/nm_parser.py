@@ -69,7 +69,7 @@ def nm_parse(input: str) -> list[NMSymbolData]:
                                  sym_name   = line_tokens[3]))
     return data
 
-def nm_get_total_size_per_type(data: list[NMSymbolData]) -> dict[str, str]:
+def nm_get_total_size_per_type(data: list[NMSymbolData]) -> dict[str, int]:
     totals: dict[str, int] = {}
 
     for d in data:
@@ -80,6 +80,19 @@ def nm_get_total_size_per_type(data: list[NMSymbolData]) -> dict[str, str]:
         totals[d.type] += d.size
 
     return totals
+
+def nm_get_percentage_per_type(totals: dict[str, int]) -> dict[str, float]:
+    grand_total = 0
+    percentages: dict[str, float] = {}
+
+    grand_total = sum(totals.values())
+
+    for type in totals.keys():
+        percentages[type] = totals[type] / grand_total
+
+    return percentages
+
+
 
 def format_table(table:list[list], padding = 4):
     out = ''
@@ -123,12 +136,15 @@ def main(argv):
 
     data = nm_parse(input)
     totals = nm_get_total_size_per_type(data)
+    percentages = nm_get_percentage_per_type(totals)
     sep = '\t'
-    table: list[list[str]] = [['Type', 'Total size, Bytes', 'Total size (hex), bytes', 'Type Description']]
-    padding = 4
+    table: list[list[str]] = [['Type', 'Total size, Bytes', 'Total size (hex), bytes', 'Percentage', 'Type Description']]
 
     for type in totals.keys():
-        table.append([type, str(totals[type]), str(hex(totals[type])), g_nm_tags[type]])
+        table.append([type, str(totals[type]),
+                      str(hex(totals[type])),
+                      f'{percentages[type] * 100:.02f}%',
+                      g_nm_tags[type]])
 
     if args.csv:
         sep = ';'
@@ -146,6 +162,7 @@ def main(argv):
 
     print('\nResult:')
     print(format_table(table))
+    print(f'Total: {sum(totals.values())} bytes')
 
     return 0
 
