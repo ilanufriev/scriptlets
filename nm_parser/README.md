@@ -64,7 +64,7 @@ d       240                  0xf0                       0.36%         Symbol in 
 Like this:
 
 ```console
-python3 nm_parser.py --run-nm /path/to/file
+$ python3 nm_parser.py --run-nm /path/to/file
 Running command: nm --size-sort --print-size /path/to/file
 
 Result:

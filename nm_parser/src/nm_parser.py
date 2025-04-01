@@ -92,8 +92,6 @@ def nm_get_percentage_per_type(totals: dict[str, int]) -> dict[str, float]:
 
     return percentages
 
-
-
 def format_table(table:list[list], padding = 4):
     out = ''
     is_first_line = True
