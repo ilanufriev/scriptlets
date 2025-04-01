@@ -9,6 +9,7 @@ parser = argparse.ArgumentParser(
         )
 parser.add_argument('--csv', action='store_true', help='output data in the .csv format')
 parser.add_argument('--run-nm', type=str, help='run nm --size-sort --print-size <FILE> and parse output', dest="FILENAME")
+parser.add_argument('--no-group', action='store_true', help='do not aggregate output data', dest='NO_GROUP')
 args = parser.parse_args()
 
 g_nm_tags = {
@@ -92,9 +93,15 @@ def nm_get_percentage_per_type(totals: dict[str, int]) -> dict[str, float]:
 
     return percentages
 
-def format_table(table:list[list], padding = 4):
+def format_table(table:list[list[str]], padding = 4):
     out = ''
     is_first_line = True
+
+    for line in table:
+        for col in range(0, len(line)):
+            if len(line[col]) > len(table[0][col]):
+                table[0][col] = table[0][col].ljust(len(line[col]), ' ')
+
     for line in table:
         is_first = True
         if not is_first_line:
@@ -132,17 +139,33 @@ def main(argv):
         if len(input) == 0:
             return 0
 
-    data = nm_parse(input)
-    totals = nm_get_total_size_per_type(data)
+    pdata = nm_parse(input)
+    totals = nm_get_total_size_per_type(pdata)
     percentages = nm_get_percentage_per_type(totals)
     sep = '\t'
-    table: list[list[str]] = [['Type', 'Total size, Bytes', 'Total size (hex), bytes', 'Percentage', 'Type Description']]
+    table: list[list[str]] = [['Type', 'Total size, Bytes', 'Total size (hex), bytes', '%', 'Type Description']]
 
-    for type in totals.keys():
-        table.append([type, str(totals[type]),
-                      str(hex(totals[type])),
-                      f'{percentages[type] * 100:.02f}%',
-                      g_nm_tags[type]])
+    if args.NO_GROUP:
+        total = sum(totals.values())
+        table = [['Type', 'Name', 'Size, bytes', 'Size (hex), bytes', '%', 'Type Description']]
+        for d in pdata:
+            table.append([
+                d.type,
+                d.name,
+                str(d.size),
+                str(hex(d.size)),
+                f'{(d.size / total) * 100:0.2f}%',
+                g_nm_tags[d.type]
+                ])
+    else:
+        for type in totals.keys():
+            table.append([
+                type,
+                str(totals[type]),
+                str(hex(totals[type])),
+                f'{percentages[type] * 100:.02f}%',
+                g_nm_tags[type]
+                ])
 
     if args.csv:
         sep = ';'
