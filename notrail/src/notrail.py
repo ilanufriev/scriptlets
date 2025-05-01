@@ -18,10 +18,10 @@ parser.add_argument('FILE',
                     nargs='+')
 
 parser.add_argument('-s', '--save-originals', action='store_true', dest='SAVE_ORIGINALS',
-                    help='Save original files into <filename>.<extension>.old')
+                    help='Save original files into <filename>.<extension>.notrail_original')
 
 parser.add_argument('--overwrite', action='store_true', dest='OVERWRITE',
-                    help='If an original file with name <filename>.<extension>.old already exists, overwrite it')
+                    help='If an original file with name <filename>.<extension>.notrail_original already exists, overwrite it')
 
 parser.add_argument('-p', '--preview', action='store_true', dest='PREVIEW',
                     help='Display files with visible whitespaces')
@@ -90,7 +90,7 @@ def run(path: str):
         if args.OVERWRITE:
             mode = 'w'
 
-        original = open(path + '.old', mode)
+        original = open(path + '.notrail_original', mode)
         original.write(''.join(lines))
         original.close()
 
