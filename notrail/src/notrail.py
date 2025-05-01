@@ -1,5 +1,8 @@
 #!/bin/python3
 
+# Copyright 2025, Anufriev Ilia, anufriewwi@rambler.ru
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 import os
 import sys
 import argparse
