@@ -41,4 +41,4 @@ $ ./notrail.py -R dir
 
 If you are worried that the originals will get overwritten, you may want to use *--save-originals* flag. It will create a file with ".notrail\_original" suffix alongside original ones.
 
-You can run notrail with --check flag to see whether or not a file has trailing whitespaces in it. If you see that it returned "1" then you can use --show-where flag, it will show precisely on which lines in the file trailing whitespaces were found.
+You can run notrail with *--check* flag to see whether or not a file has trailing whitespaces in it. If you see that it returned "1" then you can use *--show-where* flag, it will show precisely on which lines in the file trailing whitespaces were found.
